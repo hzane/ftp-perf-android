@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+GOARCH=arm \
+GOOS=linux \
+go build -o ftp-perf-arm
+# CGO_ENABLED=0
