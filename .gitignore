@@ -5,6 +5,8 @@
 *.so
 *.dylib
 .vscode/
+.idea/
+go.sum
 
 # Test binary, build with `go test -c`
 *.test
