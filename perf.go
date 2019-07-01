@@ -216,7 +216,6 @@ func panice(err error) {
 		panic(err)
 	}
 }
-
 func if2(cond bool, a, b string) string {
 	if cond {
 		return a

@@ -28,4 +28,3 @@ adb shell "chmod a+x /data/local/tmp/ftp-perf-arm64"
 adb shell "ls -l /data/local/tmp/ftp-perf-arm64"
 echo "DONE"
 ```
-
