@@ -1,5 +1,7 @@
 # FTP-Perf-Android
 
+Some codes are copied from `github.com/secsy/goftp`
+
 ## 限制
 
 - 暂时不支持主动模式，因为目前没有实现公网IP地址探测，也没有实现TCP穿透，这些在Android上都不好实现
