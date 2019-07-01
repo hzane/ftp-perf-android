@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+        .echarts {
+            height: 50%;
+        }
+    </style>
+</head>
+
+<body style="height: 100%; margin: 0">
+    <div id="container-line" style="height:0%;"></div>
+    <div id="container-gauge" style="height:96%;"></div>
+    <div id="container-progress" style="height:30px;"></div>
+    <script type="text/javascript" src="/static/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/static/echarts.js"></script>
+    <script type="text/javascript" src="/static/shine.js"></script>
+    <script type="text/javascript" src="/static/progressbar.min.js"></script>
+    <script type="text/javascript">
+        var progress = new ProgressBar.Line('#container-progress', { 
+            duration: 140,
+            color: '#EA6582',
+            trailColor: '#eee',
+            trailWidth: 0.5,
+            from: { color: '#EA6582' },
+            to: { color: '#224' },            
+            easing: 'easeInOut' ,
+            strokeWidth: 0.5,
+            step: (state, bar) => {
+                bar.path.setAttribute('stroke', state.color);
+            }            
+        });
+
+        var method = new URLSearchParams(window.location.search).get('method') || 'download';
+
+        var dom = document.getElementById("container-gauge");
+        var gauge = echarts.init(dom, 'shine');
+
+        option = {
+            tooltip: {
+                formatter: "{a} <br/>{b} : {c} mbps"
+            },
+            toolbox: {
+                show: false,
+                feature: {
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            title: {
+                text: method === 'download' ? '下载速率' : '上传速率',
+                subtext: ''
+            },
+            series: [
+                {
+                    name: method === 'download' ? '下载' : '上传',
+                    type: 'gauge',
+                    max: 11,
+                    splitNumber: 11,
+                    axisLine: {            // 坐标轴线
+                        lineStyle: {       // 属性lineStyle控制线条样式
+                            width: 8
+                        }
+                    },
+                    axisTick: {            // 坐标轴小标记
+                        length: 15        // 属性length控制线长
+                    },
+                    splitLine: {           // 分隔线
+                        length: 30         // 属性length控制线长
+                    },
+                    axisLabel: {
+                        backgroundColor: 'auto',
+                        borderRadius: 1,
+                        color: '#eee',
+                        padding: 3,
+                        textShadowBlur: 2,
+                        textShadowOffsetX: 0,
+                        textShadowOffsetY: 0,
+                        textShadowColor: '#222'
+                    },
+                    pointer: {           // 分隔线
+                        shadowColor: '#fff', //默认透明
+                        width: 2
+                    },
+                    title: {
+                        // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                        fontWeight: 'bolder',
+                        fontSize: '150%',
+                        fontStyle: 'italic'
+                    },
+                    detail: {
+                        formatter: function (value) {
+                            value = (value + '').split('.');
+                            value.length < 2 && (value.push('0   '));
+                            value[0]="    "+value[0];
+                            value[1]=value[1]+"    ";
+                            return value[0].slice(-3)+"."+value[1].slice(0, 3)
+                        },
+                        fontFamily: 'Arial',
+                        fontWeight: 'bolder',
+                        rich: {}
+                    },
+                    data: [{ value: 0, name: 'kbps' }]
+                }
+            ]
+        };
+        // var line = echarts.init(document.getElementById('container-line'), 'shine')
+
+        var data=[];
+        var point=0;
+        var pointN = 120;
+        for(var i = 0; i < pointN; i++){
+            data.push(0);
+        }
+
+        option2 = {
+            xAxis: {
+                show:true,
+                boundaryGap: true,
+                type: 'category',
+                splitLine:{
+                    show:false
+                }
+            },
+            yAxis: {
+                show:false,
+                scale: true,
+                type: 'value'
+            },
+            series: [{
+                smooth: true,
+                symbol: false,
+                data: data,
+                type: 'line'
+            }]
+        };
+        // line.setOption(option2, true);
+        var timer = setInterval(function () {
+            var uri = '/v3/' + method + '/?method=status'
+            $.ajax({
+                type: "post",
+                async: true,
+                url: uri,
+                dataType: "json",
+                success: function (result) {
+                    //请求成功时执行该函数内容，result即为服务器返回的json对象
+                    var pm = (result["permillage"] || 0) / 1000;
+                    var spd = result["speed"] || 0;
+                    var mx = result["bandwidth"] || 11;
+                    var unit = result["unit"] || "kbps";
+                    var ended = result["ended"] || 0;
+                    var started = result["started"] || 0;
+                    var bps = result["bps"] || 0;
+                    var avg = result["average-bps"] || 0;
+
+                    option.series[0].max = mx;
+                    option.series[0].data[0].name = unit;
+                    option.series[0].data[0].value = spd.toFixed(2) - 0;
+                    if (ended){
+                        option.series[0].data[0].name="mbps";
+                        option.series[0].data[0].value = avg/1000/1000;
+                    }
+                    if (started){
+                        if (data.length >= pointN) {
+                            data.shift();
+                        }
+                        data.push(bps);
+                    }
+
+                    gauge.setOption(option, true);
+                    progress.animate(pm);
+                    /*
+                    line.setOption({
+                        series: [{
+                            data: data
+                        }]
+                    });
+                    */
+                    if (ended){
+                        clearInterval(timer);
+                    }
+                },
+                error: function (errorMsg) {
+                }
+            })
+
+
+        }, 150);
+
+        if (option && typeof option === "object") {
+            gauge.setOption(option, true);
+        }
+    </script>
+</body>
+
+</html>

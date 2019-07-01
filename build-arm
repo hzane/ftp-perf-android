@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+export PATH=$PATH:$ANDROID_TOOLCHAIN/bin
+export TARGET_HOST=aarch64-linux-android
+
+export GOARCH=arm64 
+export GOOS=android 
+export CGO_ENABLED=1
+export CC=${TARGET_HOST}-gcc
+export CXX=${TARGET_HOST}-g++
+
+go build -o ftp-perf-arm64
