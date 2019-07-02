@@ -1,8 +1,5 @@
 ## FTP测速软件Android端的开发环境和编译方法
 
-- FTP测速软件(程序名叫`ftp-perf-arm64`)Android端是个普通的`ELF`程序
-- 不是我们通常意义上的`Android APP`
-- 所以`ftp-perf-arm64`编译方法和我们通常的`APK`很大不同，它没有`APK`
 
 ### 安装Windows上的开发环境
 
@@ -131,13 +128,4 @@
    goftp: ends
    ```
 
-   
-
-9. 验证`PC DEMO`是否工作
-
-   1. `PC DEMO`是一个在`Windows`端启动手机上的`ftp-perf-arm64`程序的，有这样一个界面。如果程序能够正常运行说明，环境和整个程序运行正确
-
-      ![1559281145260](C:\Users\hzane\AppData\Roaming\Typora\typora-user-images\1559281145260.png)
-
-10. 环境准备好，开始开发`CDS`的`ATE`…
 
