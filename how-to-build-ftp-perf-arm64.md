@@ -52,29 +52,29 @@
       go get -u -v github.com/fclairamb/ftpserver
       ```
 
-      
+
 
 6. 编译程序
 
    ```
    set TARGET_HOST=aarch64-linux-android
-   
+
    set PATH=%PATH%;%ANDROID_TOOLCHAIN%/bin
    set GOARCH=arm64
    set GOOS=android
    set CGO_ENABLED=1
    set CC=%TARGET_HOST%-gcc
    set CXX=%TARGET_HOST%-g++
-   
+
    where %CC%
-   
+
    :: 必须进入到ftp-perf-arm64目录，第一次编译可能比较慢
-   cd c:/repo/cds8-svn/ftp-perf-arm64 
-   
+   cd c:/repo/cds8-svn/ftp-perf-arm64
+
    go build -o ftp-perf-arm64
-   
+
    file ftp-perf-arm64
-   
+
    :: ftp-perf-arm64; ELF 64-bit LSB shared object, version 1 (SYSV), dynamically linked (uses shared libs), not stripped
    ```
 
@@ -88,13 +88,13 @@
    adb shell "su -c chmod a+x /data/data/ftp-perf-arm64"
    ```
 
-   
+
 
 8. 验证安装是否正确
 
    ```bash
    adb shell "su -c /data/data/ftp-perf-arm64"
-   
+
    c:\repo\cds8-svn\bin>adb shell "su -c /data/data/ftp-perf-arm64 --file=1K.rar"
    goftp: 0.000 #1 opening control connection to 218.203.61.198:21
    goftp: 0.146 #1 sending command user heilongjiangdl
@@ -131,13 +131,10 @@
    goftp: ends
    ```
 
-   
+
 
 9. 验证`PC DEMO`是否工作
 
    1. `PC DEMO`是一个在`Windows`端启动手机上的`ftp-perf-arm64`程序的，有这样一个界面。如果程序能够正常运行说明，环境和整个程序运行正确
 
       ![1559281145260](C:\Users\hzane\AppData\Roaming\Typora\typora-user-images\1559281145260.png)
-
-10. 环境准备好，开始开发`CDS`的`ATE`…
-
